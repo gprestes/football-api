@@ -1,0 +1,138 @@
+swagger: "2.0"
+info:
+  version: 0.0.1
+  title: Football
+  description: An API to register and search for football details
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Guilherme Heuser Prestes
+    email: guilherme.prestes@gmail.com
+    url: http://gprestes.github.io
+  license:
+    name: MIT
+    url: http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT
+host: gprestes.github.io
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /competitions:
+    get:
+      description: Gets `Competition` objects.
+      operationId: findCompetitions
+      parameters:
+        - name: limit
+          in: query
+          description: Size of array
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Competition'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      description: Creates a new competition
+      operationId: addCompetition
+      parameters:
+        - name: competition
+          in: body
+          description: Competition to add
+          required: true
+          schema:
+            $ref: '#/definitions/NewCompetition'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/Competition'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/Error'
+  /competitions/{id}:
+    get:
+      description: Returns a competition based on a single ID
+      operationId: findCompetitionById
+      parameters:
+        - name: id
+          in: path
+          description: ID of competition to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Competition Response
+          schema:
+            $ref: '#/definitions/Competition'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      description: deletes a single Competition based on the ID supplied
+      operationId: deleteCompetition
+      parameters:
+        - name: id
+          in: path
+          description: ID of Competition to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: Competition Deleted
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/Error'            
+definitions:
+  Competition:
+      allOf:
+      - $ref: '#/definitions/NewCompetition'
+      - required:
+        - id
+        properties:
+          id:
+            type: integer
+            format: int64
+  NewCompetition:
+    required:
+      - caption
+      - league
+    properties:
+      caption:
+        type: string
+      league:
+        type: string
+      year:
+        type: number
+      currentMatchday:
+        type: number
+      numberOfMatchdays:
+        type: number
+      numberOfTeams:
+        type: number
+      numberOfGames:
+        type: number
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
